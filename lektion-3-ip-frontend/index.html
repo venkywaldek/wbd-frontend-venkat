@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>What is my IP</title>
+</head>
+<body>
+  <h3> My public ip is <span id="ip"> </span></h3>
+
+  <script> 
+    const apiUrl = "https://battinav-webcommunications-project-battinav-webb1project.2.rahtiapp.fi/api/ip"
+    
+    async function getIp(){
+    const res =   await fetch(apiUrl);
+    const data = await res.json();
+   console.log(data);
+   document.getElementById("ip").textContent =  data.ip;
+}
+    getIp()
+  </script>
+</body>
+</html>
