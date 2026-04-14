@@ -10,15 +10,7 @@
   <h3> My public ip is <span id="ip"> </span></h3>
 
   <script> 
-    const apiUrl = "https://battinav-webcommunications-project-battinav-webb1project.2.rahtiapp.fi/api/ip"
-    
-    async function getIp(){
-    const res =   await fetch(apiUrl);
-    const data = await res.json();
-   console.log(data);
-   document.getElementById("ip").textContent =  data.ip;
-}
-    getIp()
+   
   </script>
 </body>
 </html>

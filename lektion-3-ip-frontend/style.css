@@ -1,3 +1,11 @@
 body{
   font-family: "Seg";
 }
+
+.dateSelection{
+  padding: 5px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
