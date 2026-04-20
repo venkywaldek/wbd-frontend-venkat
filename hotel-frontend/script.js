@@ -1,7 +1,8 @@
 //  const apiUrl = "https://battinav-webcommunications-project-battinav-webb1project.2.rahtiapp.fi/api/ip"
 
-const apiUrl = 'http://127.0.0.1:8080';
+//  const apiUrl = "https://battinav-webcommunications-project-battinav-webb1project.2.rahtiapp.fi/api/ip"
 
+const apiUrl = 'http://127.0.0.1:8080';
 
 const guestId = document.getElementById("guest_id");
 const datefrom = document.getElementById("datefrom");
@@ -12,6 +13,29 @@ const roomSelect = document.getElementById("room_id");
 const bookingList = document.getElementById("bookingList");
 const roomList = document.getElementById("roomList");
 const message = document.getElementById("message");
+
+async function getGuests() {
+  try {
+    const res = await fetch(`${apiUrl}/guests`);
+    const guests = await res.json();
+
+    guestId.innerHTML = '<option value="">Välj en gäst</option>';
+
+    for (const guest of guests) {
+      const option = document.createElement("option");
+      option.value = guest.id;
+      option.textContent =
+        `${guest.first_name} ${guest.last_name}` +
+        (guest.previous_visits !== undefined
+          ? ` (${guest.previous_visits} tidigare besök)`
+          : "");
+      guestId.appendChild(option);
+    }
+  } catch (error) {
+    console.error("Fel vid hämtning av gäster:", error);
+    guestId.innerHTML = '<option value="">Kunde inte ladda gäster</option>';
+  }
+}
 
 async function getRooms() {
   try {
@@ -44,13 +68,21 @@ async function getBookings() {
 
     bookingList.innerHTML = "";
 
-    for (const booking of bookings) {
+    for (const b of bookings) {
       const li = document.createElement("li");
 
       li.textContent =
-        `Bokning #${booking.id} | Rum: ${booking.room_number ?? booking.room_id} | ` +
-        `Från: ${booking.datefrom} | Till: ${booking.dateto}` +
-        (booking.addinfo ? ` | Info: ${booking.addinfo}` : "");
+        `Bokning #${b.id} | ` +
+        `Gäst: ${
+          b.first_name && b.last_name
+            ? `${b.first_name} ${b.last_name}`
+            : b.guest_id
+        } | ` +
+        `Rum: ${b.room_number ?? b.room_id} | ` +
+        `Från: ${b.datefrom} | Till: ${b.dateto}` +
+        (b.nights !== undefined ? ` | Nätter: ${b.nights}` : "") +
+        (b.total_price !== undefined ? ` | Totalpris: ${b.total_price} €` : "") +
+        (b.addinfo ? ` | Info: ${b.addinfo}` : "");
 
       bookingList.appendChild(li);
     }
@@ -94,6 +126,7 @@ async function createBooking() {
     message.textContent = "Bokningen skapades.";
     document.getElementById("bookingForm").reset();
 
+    await getGuests();
     await getBookings();
   } catch (error) {
     console.error("Fel vid skapande av bokning:", error);
@@ -104,6 +137,7 @@ async function createBooking() {
 createBookingBtn.addEventListener("click", createBooking);
 
 window.addEventListener("load", async () => {
+  await getGuests();
   await getRooms();
   await getBookings();
 });
